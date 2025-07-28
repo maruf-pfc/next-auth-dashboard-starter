@@ -124,9 +124,24 @@ export function AppSidebar() {
   );
 }
 
-function RecursiveMenuItem({ item, level = 0 }: { item: any; level?: number }) {
+interface MenuItem {
+  title: string;
+  url?: string;
+  icon?: React.ElementType;
+  isRoot?: boolean;
+  haveChildren?: boolean;
+  children?: MenuItem[];
+}
+
+interface RecursiveMenuItemProps {
+  item: MenuItem;
+  level?: number;
+}
+
+export function RecursiveMenuItem({ item, level = 0 }: RecursiveMenuItemProps) {
   const [open, setOpen] = useState(false);
-  const hasChildren = item.haveChildren && item.children?.length > 0;
+  const hasChildren =
+    item.haveChildren && item.children && item.children.length > 0;
 
   const paddingLeft =
     item.isRoot && !item.haveChildren ? "0.5rem" : `${(level + 1) * 1}rem`;
@@ -154,24 +169,26 @@ function RecursiveMenuItem({ item, level = 0 }: { item: any; level?: number }) {
             </>
           </SidebarMenuButton>
         ) : (
-          <SidebarMenuButton asChild>
-            <Link
-              href={item.url}
-              className="flex items-center gap-2 w-full"
-              style={{ paddingLeft }}
-            >
-              {item.icon && (
-                <item.icon className="h-5 w-5 text-muted-foreground" />
-              )}
-              <span>{item.title}</span>
-            </Link>
-          </SidebarMenuButton>
+          item.url && (
+            <SidebarMenuButton asChild>
+              <Link
+                href={item.url}
+                className="flex items-center gap-2 w-full"
+                style={{ paddingLeft }}
+              >
+                {item.icon && (
+                  <item.icon className="h-5 w-5 text-muted-foreground" />
+                )}
+                <span>{item.title}</span>
+              </Link>
+            </SidebarMenuButton>
+          )
         )}
       </SidebarMenuItem>
 
       {hasChildren && open && (
         <div>
-          {item.children.map((child: any) => (
+          {item.children?.map((child) => (
             <RecursiveMenuItem
               key={child.title}
               item={child}
