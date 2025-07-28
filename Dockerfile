@@ -42,7 +42,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/tsconfig.json ./
-COPY --from=builder /app/.env ./.env
+COPY --from=builder /app/.env.example ./.env.local
 
 # Start the app
 CMD ["pnpm", "start"]
