@@ -1,48 +1,41 @@
-# ----------------------
 # Stage 1: Build
-# ----------------------
 FROM node:18-alpine AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Enable and configure PNPM
+# Enable Corepack and activate PNPM
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 
-# Copy all project files
-COPY . .
+# Copy dependencies files first for better caching
+COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
-# Build the Next.js project (supports TS out of the box)
+# Copy the rest of the application
+COPY . .
+
+# Build the Next.js app
 RUN pnpm build
 
-# ----------------------
 # Stage 2: Production
-# ----------------------
 FROM node:18-alpine AS runner
 
-# Set working directory
 WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3000
 
-ENV NODE_ENV production
-ENV PORT 3000
-
-# Enable corepack & PNPM
+# Enable Corepack and activate PNPM
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 
-# Install only production dependencies
+# Copy only necessary files from builder
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-lock.yaml ./
-RUN pnpm install --prod
-
-# Copy built app
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/tsconfig.json ./
-COPY --from=builder /app/.env.example ./.env.local
+COPY --from=builder /app/next.config.ts ./
 
-# Start the app
+# Use Next.js built-in server
 CMD ["pnpm", "start"]
