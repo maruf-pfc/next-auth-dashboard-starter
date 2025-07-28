@@ -1,0 +1,41 @@
+bug:
+  - "bug"
+  - "Bug"
+  - "error"
+  - "Error"
+  - "fail"
+  - "Fail"
+
+feature:
+  - "feature"
+  - "Feature"
+  - "enhancement"
+  - "Enhancement"
+  - "request"
+  - "Request"
+
+documentation:
+  - "docs"
+  - "Docs"
+  - "documentation"
+  - "Documentation"
+  - "readme"
+  - "README"
+
+question:
+  - "question"
+  - "Question"
+  - "help"
+  - "Help"
+
+security:
+  - "security"
+  - "Security"
+  - "vulnerability"
+  - "Vulnerability"
+
+performance:
+  - "performance"
+  - "Performance"
+  - "slow"
+  - "Slow"
